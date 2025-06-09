@@ -1,0 +1,124 @@
+name: Generate .NET Project
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_name:
+        description: 'Project Name (PascalCase, e.g., MediaRecorder - Kr prefix will be added automatically)'
+        required: true
+        type: string
+      create_repo:
+        description: 'Create new GitHub repository?'
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  generate-project:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout scaffold repository
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Validate project name
+      run: |
+        if [[ ! "${{ github.event.inputs.project_name }}" =~ ^[A-Z][a-zA-Z0-9]*$ ]]; then
+          echo "Project name must be PascalCase and start with a letter"
+          exit 1
+        fi
+        
+    - name: Generate project files
+      run: |
+        # Add KR prefix to project name
+        BASE_PROJECT_NAME="${{ github.event.inputs.project_name }}"
+        PROJECT_NAME="${BASE_PROJECT_NAME}"
+        PROJECT_TYPE="${{ github.event.inputs.project_type }}"
+        
+        # Create working directory
+        mkdir -p generated-project
+        
+        # Copy template files
+        cp -r template/* generated-project/
+        
+        # Replace placeholders in all files
+        find generated-project -type f -name "*.cs" -o -name "*.csproj" -o -name "*.sln" -o -name "*.md" -o -name "*.json" | \
+        while read file; do
+          sed -i "s/__PROJECT_NAME__/$PROJECT_NAME/g" "$file"
+        done
+        
+        # Rename directories and files
+        find generated-project -depth -name "*__PROJECT_NAME__*" | \
+        while read path; do
+          new_path=$(echo "$path" | sed "s/__PROJECT_NAME__/$PROJECT_NAME/g")
+          mv "$path" "$new_path"
+        done       
+        
+    # - name: Create repository archive
+    #   run: |
+    #     cd generated-project
+    #     tar -czf ../KR${{ github.event.inputs.project_name }}.tar.gz .
+        
+    # - name: Upload generated project
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: KR${{ github.event.inputs.project_name }}
+    #     path: KR${{ github.event.inputs.project_name }}.tar.gz
+        
+    - name: Create new repository
+      if: github.event.inputs.create_repo == 'true' && secrets.PERSONAL_ACCESS_TOKEN != ''
+      env:
+        GH_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      run: |
+        # Set up git configuration
+        git config --global user.name "GitHub Actions Bot"
+        git config --global user.email "actions@github.com"
+        
+        # Create new repository with KR prefix
+        REPO_NAME="Kr.${{ github.event.inputs.project_name }}"
+        
+        # Create the repository
+        gh repo create $REPO_NAME --public --description "Generated .NET project from KR scaffold template"
+        
+        # Clone the new empty repository
+        gh repo clone $REPO_NAME temp-repo
+        
+        # Copy generated files to the new repo
+        cp -r generated-project/* temp-repo/
+        
+        # Push to new repository
+        cd temp-repo
+        git add .
+        git commit -m "🚀 Initial commit: Generated KR${{ github.event.inputs.project_name }} from scaffold template
+
+        Project Type: ${{ github.event.inputs.project_type }}
+        Generated: $(date)
+        Scaffold: ${{ github.repository }}"
+        git push origin main
+        
+        # Output the new repository URL
+        echo "✅ New repository created: https://github.com/${{ github.repository_owner }}/KR${{ github.event.inputs.project_name }}"
+        
+        # Add repository URL to job summary
+        echo "## 🎉 Repository Created Successfully!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Repository:** [KR${{ github.event.inputs.project_name }}](https://github.com/${{ github.repository_owner }}/KR${{ github.event.inputs.project_name }})" >> $GITHUB_STEP_SUMMARY
+        echo "**Project Type:** ${{ github.event.inputs.project_type }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Generated:** $(date)" >> $GITHUB_STEP_SUMMARY
+        
+    - name: Repository creation status
+      if: github.event.inputs.create_repo == 'true' && secrets.PERSONAL_ACCESS_TOKEN == ''
+      run: |
+        echo "❌ Cannot create repository: PERSONAL_ACCESS_TOKEN secret not configured"
+        echo "## ⚠️ Repository Creation Failed" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "To enable automatic repository creation:" >> $GITHUB_STEP_SUMMARY
+        echo "1. Create a Personal Access Token with 'repo' permissions" >> $GITHUB_STEP_SUMMARY
+        echo "2. Add it as a repository secret named 'PERSONAL_ACCESS_TOKEN'" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Your project files are still available as artifacts above." >> $GITHUB_STEP_SUMMARY
