@@ -35,9 +35,9 @@ jobs:
         
     - name: Generate project files
       run: |
-        # Add Kr prefix to project name
+        # Add prefix to project name
         BASE_PROJECT_NAME="${{ github.event.inputs.project_name }}"
-        PROJECT_NAME="Kr${BASE_PROJECT_NAME}"
+        PROJECT_NAME="${BASE_PROJECT_NAME}"
         
         # Create working directory
         mkdir -p generated-project
@@ -95,7 +95,7 @@ jobs:
         # Push to new repository
         cd temp-repo
         git add .
-        git commit -m "🚀 Initial commit: Generated Kr${{ github.event.inputs.project_name }} from scaffold template
+        git commit -m "🚀 Initial commit: Generated Kr.${{ github.event.inputs.project_name }} from scaffold template
 
         Generated: $(date)
         Scaffold: ${{ github.repository }}"
@@ -116,7 +116,7 @@ jobs:
         echo "Repository creation was skipped by user choice"
         echo "## 📦 Project Generated Successfully" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**Project:** Kr${{ github.event.inputs.project_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Project:** Kr.${{ github.event.inputs.project_name }}" >> $GITHUB_STEP_SUMMARY
         echo "**Generated:** $(date)" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "Download the artifact above to get your generated project files." >> $GITHUB_STEP_SUMMARY
