@@ -43,7 +43,7 @@ jobs:
         mkdir -p generated-project
         
         # Copy template files
-        cp -r template/* generated-project/
+        cp -r src/* generated-project/
         
         # Replace placeholders in all files
         find generated-project -type f -name "*.cs" -o -name "*.csproj" -o -name "*.sln" -o -name "*.md" -o -name "*.json" | \
