@@ -57,18 +57,7 @@ jobs:
           new_path=$(echo "$path" | sed "s/__PROJECT_NAME__/$PROJECT_NAME/g")
           mv "$path" "$new_path"
         done       
-        
-    - name: Create repository archive
-      run: |
-        cd generated-project
-        tar -czf ../Kr${{ github.event.inputs.project_name }}.tar.gz .
-        
-    - name: Upload generated project
-      uses: actions/upload-artifact@v3
-      with:
-        name: Kr${{ github.event.inputs.project_name }}
-        path: Kr${{ github.event.inputs.project_name }}.tar.gz
-        
+                
     - name: Create new repository
       if: github.event.inputs.create_repo == 'true'
       env:
