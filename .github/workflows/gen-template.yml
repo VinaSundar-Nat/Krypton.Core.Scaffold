@@ -46,17 +46,30 @@ jobs:
         cp -r src/* generated-project/
         
         # Replace placeholders in all files
-        find generated-project -type f -name "*.cs" -o -name "*.csproj" -o -name "*.sln" -o -name "*.md" -o -name "*.json" | \
+        find generated-project -type f -name "*.cs" -o -name "*.csproj" -o -name "*.sln" -o -name "*.md" -o -name "*.json" -o -name "*.http" | \
         while read file; do
           sed -i "s/__PROJECT_NAME__/$PROJECT_NAME/g" "$file"
         done
         
-        # Rename directories and files
-        find generated-project -depth -name "*__PROJECT_NAME__*" | \
-        while read path; do
-          new_path=$(echo "$path" | sed "s/__PROJECT_NAME__/$PROJECT_NAME/g")
-          mv "$path" "$new_path"
-        done       
+        # Rename directories first (deepest first to avoid path issues)
+        find generated-project -depth -type d -name "*__PROJECT_NAME__*" | \
+        while read dir; do
+          new_dir=$(echo "$dir" | sed "s/__PROJECT_NAME__/$PROJECT_NAME/g")
+          if [ "$dir" != "$new_dir" ]; then
+            echo "Renaming directory: $dir -> $new_dir"
+            mv "$dir" "$new_dir"
+          fi
+        done
+        
+        # Then rename files
+        find generated-project -type f -name "*__PROJECT_NAME__*" | \
+        while read file; do
+          new_file=$(echo "$file" | sed "s/__PROJECT_NAME__/$PROJECT_NAME/g")
+          if [ "$file" != "$new_file" ]; then
+            echo "Renaming file: $file -> $new_file"
+            mv "$file" "$new_file"
+          fi
+        done
                 
     - name: Create new repository
       if: github.event.inputs.create_repo == 'true'
