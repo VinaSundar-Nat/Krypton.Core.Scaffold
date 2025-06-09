@@ -89,30 +89,44 @@ jobs:
           exit 1
         fi
         
-        # Set up git configuration
+        # Test token permissions
+        echo "Testing GitHub token permissions..."
+        if ! gh auth status; then
+          echo "❌ GitHub token authentication failed"
+          exit 1
+        fi
+        
+        # Set up git configuration with token
         git config --global user.name "GitHub Actions Bot"
         git config --global user.email "actions@github.com"
+        git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"
         
         # Create new repository with Kr prefix
         REPO_NAME="Kr.${{ github.event.inputs.project_name }}"
         
         # Create the repository
-        gh repo create $REPO_NAME --public --description "Generated .NET project from Kr scaffold template"
+        echo "Creating repository: $REPO_NAME"
+        if ! gh repo create $REPO_NAME --public --description "Generated .NET project from Kr scaffold template"; then
+          echo "❌ Failed to create repository. Check your token permissions:"
+          echo "- Token needs 'repo' scope for public repositories"
+          echo "- Token needs 'public_repo' scope"
+          echo "- If using fine-grained tokens, ensure 'Repository creation' permission"
+          exit 1
+        fi
         
-        # Clone the new empty repository
-        gh repo clone $REPO_NAME temp-repo
-        
-        # Copy generated files to the new repo
-        cp -r generated-project/* temp-repo/
-        
-        # Push to new repository
-        cd temp-repo
+        # Initialize git in the generated project directory
+        cd generated-project
+        git init
         git add .
         git commit -m "🚀 Initial commit: Generated Kr.${{ github.event.inputs.project_name }} from scaffold template
 
         Generated: $(date)
         Scaffold: ${{ github.repository }}"
-        git push origin main
+        
+        # Add remote and push
+        git remote add origin "https://github.com/${{ github.repository_owner }}/$REPO_NAME.git"
+        git branch -M main
+        git push -u origin main
         
         # Output the new repository URL
         echo "✅ New repository created: https://github.com/${{ github.repository_owner }}/Kr.${{ github.event.inputs.project_name }}"
