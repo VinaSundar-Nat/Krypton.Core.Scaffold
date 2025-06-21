@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="../Kr.__PROJECT_NAME__.Adapter/Kr.__PROJECT_NAME__.Adapter.csproj" />
+    <ProjectReference Include="../Kr.__PROJECT_NAME__.Domain/Kr.__PROJECT_NAME__.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

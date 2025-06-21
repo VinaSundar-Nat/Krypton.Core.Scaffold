@@ -1,0 +1,9 @@
+using System;
+using Kr.__PROJECT_NAME__.Domain.Dto;
+
+namespace Kr.__PROJECT_NAME__.Domain.Ports;
+
+public interface ISampleFeature
+{
+    Task<SampleDto> Samples(string id);
+}

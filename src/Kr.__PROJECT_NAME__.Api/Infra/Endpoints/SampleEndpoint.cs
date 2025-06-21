@@ -1,0 +1,33 @@
+﻿using Kr.__PROJECT_NAME__.Api.Infra.Helpers;
+using Kr.__PROJECT_NAME__.Common.Infrastructure.Http.Models;
+using Kr.__PROJECT_NAME__.Domain.Dto;
+using Kr.__PROJECT_NAME__.Domain.Ports;
+using Microsoft.AspNetCore.Mvc;
+
+
+namespace KR.Document.HB.Api;
+
+public static partial class ApiEndpoints
+{
+    public static void SampleEndpoints(this WebApplication app)
+    {
+        var sampleGroup = app.MapGroup("/api/doc/sample/v1");
+        sampleGroup.MapGet("/", async ([AsParameters] ApiGetRequest request,
+                HttpContext context,
+                [FromServices] ISampleFeature sampleFeature,
+                CancellationToken token = default) =>
+        {
+            var sample = await sampleFeature.Samples("TEST");
+            return Results.Ok(new ApiGetSuccessResponse<SampleDto> { StatusCode = 200, Url = context.Request.Path ,Data = sample });
+        }).WithOpenApi(operation =>
+            operation.GenerateOpenApiDoc(
+                "v1 sample get.",
+                "sample get endpoint to test the api.",
+                "Sample",
+                "File opertaions to support enterprise operations."
+        ))
+        .Produces<ApiGetResponse>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status500InternalServerError)
+        .Produces(StatusCodes.Status400BadRequest);
+    }
+}

@@ -7,8 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-     <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
-     <PackageReference Include="Swashbuckle.AspNetCore"/>
+     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+     <PackageReference Include="Swashbuckle.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Kr.__PROJECT_NAME__.Adapter/Kr.__PROJECT_NAME__.Adapter.csproj" />
+    <ProjectReference Include="../Kr.__PROJECT_NAME__.Application/Kr.__PROJECT_NAME__.Application.csproj" />
+    <ProjectReference Include="../Kr.__PROJECT_NAME__.Domain/Kr.__PROJECT_NAME__.Domain.csproj" />
   </ItemGroup>
 
 </Project>
