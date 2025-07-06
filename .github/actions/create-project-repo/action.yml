@@ -125,8 +125,8 @@ runs:
         Generated: $(date)
         Scaffold: ${{ github.repository }}"
         
-        # Set up remote
-        git remote add origin "https://github.com/$FULL_REPO_NAME.git"
+        # Set up remote with token authentication
+        git remote add origin "https://$GH_TOKEN@github.com/$FULL_REPO_NAME.git"
         
         # Push with authentication
         echo "Pushing to repository..."
