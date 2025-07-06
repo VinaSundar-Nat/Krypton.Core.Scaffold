@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{6749F3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kr.__PROJECT_NAME__.Common", "Shared\Kr.__PROJECT_NAME__.Common\Kr.__PROJECT_NAME__.Common.csproj", "{C784400D-6389-4CAD-93F0-DD772D8F10D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kr.__PROJECT_NAME__.Persistence", "Kr.__PROJECT_NAME__.Persistence\Kr.__PROJECT_NAME__.Persistence.csproj", "{2D07BA0B-D4FC-421A-A016-70190F233FFB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{C784400D-6389-4CAD-93F0-DD772D8F10D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C784400D-6389-4CAD-93F0-DD772D8F10D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C784400D-6389-4CAD-93F0-DD772D8F10D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D07BA0B-D4FC-421A-A016-70190F233FFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D07BA0B-D4FC-421A-A016-70190F233FFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D07BA0B-D4FC-421A-A016-70190F233FFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D07BA0B-D4FC-421A-A016-70190F233FFB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
