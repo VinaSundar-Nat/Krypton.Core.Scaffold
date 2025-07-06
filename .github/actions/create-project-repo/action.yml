@@ -1,0 +1,156 @@
+name: 'Create repository with project files'
+description: 'Creates a new repository and initializes it with project files.'
+
+inputs:
+  PAT:
+    description: 'Personal Access Token for GitHub'
+    required: true
+  PROJECT_NAME:
+    description: 'Name of the project to create'
+    required: true
+  CREATE_REPO:
+    description: 'Whether to create a new repository'
+    required: true
+  REPO_OWNER:
+    description: 'Owner of the repository (defaults to authenticated user)'
+    required: false
+    default: '${{ github.repository_owner }}'
+
+runs:
+  using: 'composite' 
+  steps:
+    - name: 'Create new repository'
+      env:
+        GH_TOKEN: ${{ inputs.PAT }}
+      run: |
+        # Validate inputs
+        if [[ ! "${{ inputs.PROJECT_NAME }}" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+          echo "❌ Invalid project name format"
+          exit 1
+        fi
+        
+        # Check if token is available
+        if [ -z "$GH_TOKEN" ]; then
+          echo "❌ Cannot create repository: PERSONAL_ACCESS_TOKEN secret not configured"
+          echo "## ⚠️ Repository Creation Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "To enable automatic repository creation:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Create a Personal Access Token with 'repo' permissions" >> $GITHUB_STEP_SUMMARY
+          echo "2. Add it as a repository secret named 'PERSONAL_ACCESS_TOKEN'" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Your project files are still available as artifacts above." >> $GITHUB_STEP_SUMMARY
+          exit 1
+        fi
+        
+        # Test token permissions
+        echo "Testing GitHub token permissions..."
+        if ! gh auth status; then
+          echo "❌ GitHub token authentication failed"
+          exit 1
+        fi
+        
+        # Get the authenticated user info
+        echo "Getting authenticated user info..."
+        AUTHENTICATED_USER=$(gh api user --jq '.login')
+        echo "Authenticated as: $AUTHENTICATED_USER"
+        
+        # Use the authenticated user as the repository owner if not specified
+        REPO_OWNER="${{ inputs.REPO_OWNER }}"
+        if [ "$REPO_OWNER" = "${{ github.repository_owner }}" ] && [ -z "$REPO_OWNER" ]; then
+          REPO_OWNER="$AUTHENTICATED_USER"
+        fi
+        
+        REPO_NAME="Kr.${{ inputs.PROJECT_NAME }}"
+        FULL_REPO_NAME="$REPO_OWNER/$REPO_NAME"
+        
+        echo "Will create repository: $FULL_REPO_NAME"
+        
+        # Check if repository already exists
+        if gh repo view "$FULL_REPO_NAME" >/dev/null 2>&1; then
+          echo "❌ Repository $FULL_REPO_NAME already exists"
+          exit 1
+        fi
+        
+        # Verify the generated-project directory exists
+        if [ ! -d "generated-project" ]; then
+          echo "❌ generated-project directory not found"
+          exit 1
+        fi
+        
+        # Create the repository
+        echo "Creating repository: $FULL_REPO_NAME"
+        if ! gh repo create "$FULL_REPO_NAME" --public --description "Generated .NET project from Kr scaffold template"; then
+          echo "❌ Failed to create repository. Check your token permissions:"
+          echo "- Token needs 'repo' scope for public repositories"
+          echo "- Token needs 'public_repo' scope"
+          echo "- If using fine-grained tokens, ensure 'Repository creation' permission"
+          exit 1
+        fi
+        
+        # Wait for repository to be available with timeout
+        echo "Waiting for repository to be available..."
+        for i in {1..30}; do
+          if gh repo view "$FULL_REPO_NAME" >/dev/null 2>&1; then
+            echo "Repository is available"
+            break
+          fi
+          if [ $i -eq 30 ]; then
+            echo "❌ Repository creation timed out"
+            exit 1
+          fi
+          sleep 2
+        done
+        
+        # Get the full repository URL after creation
+        REPO_URL=$(gh repo view "$FULL_REPO_NAME" --json url --jq '.url')
+        echo "Repository created at: $REPO_URL"
+        
+        # Initialize git in the generated project directory
+        cd generated-project
+        
+        # Set up git configuration (local, not global)
+        git config user.name "GitHub Actions Bot"
+        git config user.email "actions@github.com"
+        
+        git init
+        git add .
+        git commit -m "🚀 Initial commit: Generated Kr.${{ inputs.PROJECT_NAME }} from scaffold template
+
+        Generated: $(date)
+        Scaffold: ${{ github.repository }}"
+        
+        # Set up remote
+        git remote add origin "https://github.com/$FULL_REPO_NAME.git"
+        git branch -M main
+        
+        # Push with authentication
+        echo "Pushing to repository..."
+        if ! git push -u origin main; then
+          echo "❌ Failed to push to repository"
+          echo "Repository was created but code push failed"
+          echo "You can manually clone and push:"
+          echo "git clone https://github.com/$FULL_REPO_NAME.git"
+          exit 1
+        fi
+        
+        # Output the new repository URL
+        echo "✅ New repository created and populated: https://github.com/$FULL_REPO_NAME"
+        
+        # Add repository URL to job summary
+        echo "## 🎉 Repository Created Successfully!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Repository:** [Kr.${{ inputs.PROJECT_NAME }}](https://github.com/$FULL_REPO_NAME)" >> $GITHUB_STEP_SUMMARY
+        echo "**Generated:** $(date)" >> $GITHUB_STEP_SUMMARY
+      shell: bash
+
+    - name: Repository creation skipped
+      if: inputs.CREATE_REPO == 'false'
+      run: |
+        echo "Repository creation was skipped by user choice"
+        echo "## 📦 Project Generated Successfully" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Project:** Kr.${{ inputs.PROJECT_NAME }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Generated:** $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Download the artifact above to get your generated project files." >> $GITHUB_STEP_SUMMARY
+      shell: bash
