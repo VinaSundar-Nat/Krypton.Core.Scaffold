@@ -108,11 +108,17 @@ runs:
         # Initialize git in the generated project directory
         cd generated-project
         
-        # Set up git configuration (local, not global)
+        # Initialize git first
+        git init --initial-branch=main
+        
+        # Set up git configuration (local to this repository)
         git config user.name "GitHub Actions Bot"
         git config user.email "actions@github.com"
         
-        git init
+        # Verify git config was set
+        echo "Git user.name: $(git config user.name)"
+        echo "Git user.email: $(git config user.email)"
+        
         git add .
         git commit -m "🚀 Initial commit: Generated Kr.${{ inputs.PROJECT_NAME }} from scaffold template
 
@@ -121,7 +127,6 @@ runs:
         
         # Set up remote
         git remote add origin "https://github.com/$FULL_REPO_NAME.git"
-        git branch -M main
         
         # Push with authentication
         echo "Pushing to repository..."
