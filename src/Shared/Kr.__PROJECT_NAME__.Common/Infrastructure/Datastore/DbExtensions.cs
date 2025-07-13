@@ -11,7 +11,7 @@ namespace Kr.__PROJECT_NAME__.Common.Infrastructure.Datastore;
 public static class DbExtensions
 {
 
-     public static void ApplyAllConfigurations(this ModelBuilder modelBuilder, Type requestor)
+    public static void ApplyAllConfigurations(this ModelBuilder modelBuilder, Type requestor)
     {
         var applyConfigurationMethodInfo = modelBuilder
             .GetType()
@@ -19,8 +19,8 @@ public static class DbExtensions
             .First(m => m.Name.Equals("ApplyConfiguration", StringComparison.OrdinalIgnoreCase));
 
         var associatedTypes = requestor.Assembly.GetTypes()
-                .Where(t => t.GetInterfaces().Any(i => 
-                i.IsGenericType && 
+                .Where(t => t.GetInterfaces().Any(i =>
+                i.IsGenericType &&
                 i.GetGenericTypeDefinition() == typeof(IEntityTypeConfiguration<>)));
 
         var instances = associatedTypes
@@ -42,7 +42,29 @@ public static class DbExtensions
         });
     }
 
-    public static void DBCContextPoolSettings<T>(this IServiceCollection services, IConfiguration configuration, string source)
+    public static void DbNpgCContextSettings<T>(this IServiceCollection services, IConfiguration configuration, string source)
+        where T : DbContext
+    {
+        DbSettings dbSettings = new();
+        configuration.GetSection(source).Bind(dbSettings);
+
+        if (!dbSettings?.IsValid ?? true)
+            ArgumentNullException.ThrowIfNull(dbSettings,
+               $"Error :{nameof(DbSettings)} configuration is invalid.");
+
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(dbSettings!.ConnectionString);
+        dataSourceBuilder.UseNetTopologySuite();
+        var dataSource = dataSourceBuilder.Build();
+
+        services.AddDbContext<T>((options) =>
+        {
+            options.UseNpgsql(dbSettings.ConnectionString,
+                o => o.UseNetTopologySuite());
+            options.EnableSensitiveDataLogging();
+        });
+    }
+
+    public static void DbNpgContextPoolSettings<T>(this IServiceCollection services, IConfiguration configuration, string source)
         where T : DbContext
     {
         var dbSettings = new DbSettings();

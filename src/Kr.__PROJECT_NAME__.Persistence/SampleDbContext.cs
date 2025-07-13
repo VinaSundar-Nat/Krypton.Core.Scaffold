@@ -1,17 +1,16 @@
 using Kr.__PROJECT_NAME__.Common.Infrastructure.Datastore;
 using Kr.__PROJECT_NAME__.Common.Infrastructure.Datastore.Model;
 using Kr.__PROJECT_NAME__.Persistence.Configuration;
+using Kr.__PROJECT_NAME__.Persistence.SampleAggregate.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Kr.__PROJECT_NAME__.Persistence;
 
-public class SampleDbContext : BaseContext<SampleDbContext>
+public class SampleDbContext(DbContextOptions<SampleDbContext> options,
+    IOptions<DbSettings> dbSettings) : BaseContext<SampleDbContext>(options, dbSettings)
 {
-    public SampleDbContext(DbContextOptions<SampleDbContext> options,
-        IOptions<DbSettings> dbSettings) : base(options, dbSettings)
-    {
-    }
+      public DbSet<Sample> Samples { get; set; }
 
     public override Task NotifyChanges()
     {
