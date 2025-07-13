@@ -38,7 +38,7 @@ public static class AppBuilder
             ArgumentNullException.ThrowIfNull(hostConfig, nameof(hostConfig));
           
 
-            if (!hostConfig.UseKerstal)
+            if (!hostConfig?.UseKerstal ?? false)
                 return;
 
             options.ConfigureHttpsDefaults(httpsOptions =>
@@ -46,7 +46,7 @@ public static class AppBuilder
                 httpsOptions.SslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13;
             });
 
-            options.Listen(IPAddress.Any, hostConfig.Port, listenOptions =>
+            options.Listen(IPAddress.Any, hostConfig!.Port, listenOptions =>
             {
                 try
                 {
