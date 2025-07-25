@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using System.Security.Authentication;
 using Kr.__PROJECT_NAME__.Application;
-using Kr.__PROJECT_NAME__.Common.Infrastructure.Logging;
 using Kr.__PROJECT_NAME__.Domain.Models.Infrastructure;
+using Kr.Common.Infrastructure.Logging;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace Kr.__PROJECT_NAME__.Api.Infra;

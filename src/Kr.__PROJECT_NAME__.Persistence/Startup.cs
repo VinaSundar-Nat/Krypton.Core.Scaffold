@@ -1,6 +1,5 @@
-using System;
-using Kr.__PROJECT_NAME__.Common.Infrastructure.Datastore;
-using Kr.__PROJECT_NAME__.Common.Infrastructure.Datastore.Model;
+using Kr.Common.Infrastructure.Datastore;
+using Kr.Common.Infrastructure.Datastore.Model;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

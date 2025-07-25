@@ -7,10 +7,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
+  <ItemGroup>
+    <PackageReference Include="Krypton.Common" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../Kr.__PROJECT_NAME__.Domain/Kr.__PROJECT_NAME__.Domain.csproj" />
-    <ProjectReference Include="../Shared/Kr.__PROJECT_NAME__.Common/Kr.__PROJECT_NAME__.Common.csproj" />
   </ItemGroup>
 
 </Project>

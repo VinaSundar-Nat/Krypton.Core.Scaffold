@@ -1,5 +1,6 @@
 using System;
-using Kr.__PROJECT_NAME__.Common.Infrastructure.Datastore;
+using Kr.Common.Infrastructure.Datastore;
+
 
 namespace Kr.__PROJECT_NAME__.Persistence.SampleAggregate.ValueObject;
 

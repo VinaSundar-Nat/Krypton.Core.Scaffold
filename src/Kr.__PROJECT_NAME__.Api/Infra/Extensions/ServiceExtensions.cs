@@ -1,5 +1,5 @@
-﻿using Kr.__PROJECT_NAME__.Common.Infrastructure.Http;
-
+﻿
+using Kr.Common.Infrastructure.Http;
 
 namespace Kr.__PROJECT_NAME__.Api.Infra;
 
