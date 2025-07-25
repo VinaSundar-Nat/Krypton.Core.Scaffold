@@ -1,7 +1,8 @@
-using Kr.__PROJECT_NAME__.Common.Infrastructure.Datastore;
-using Kr.__PROJECT_NAME__.Common.Infrastructure.Datastore.Model;
+
 using Kr.__PROJECT_NAME__.Persistence.Configuration;
 using Kr.__PROJECT_NAME__.Persistence.SampleAggregate.Entity;
+using Kr.Common.Infrastructure.Datastore;
+using Kr.Common.Infrastructure.Datastore.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 

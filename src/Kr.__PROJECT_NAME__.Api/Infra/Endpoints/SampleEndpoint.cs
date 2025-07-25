@@ -1,7 +1,7 @@
 ﻿using Kr.__PROJECT_NAME__.Api.Infra.Helpers;
-using Kr.__PROJECT_NAME__.Common.Infrastructure.Http.Models;
 using Kr.__PROJECT_NAME__.Domain.Dto;
 using Kr.__PROJECT_NAME__.Domain.Ports;
+using Kr.Common.Infrastructure.Http.Models;
 using Microsoft.AspNetCore.Mvc;
 
 

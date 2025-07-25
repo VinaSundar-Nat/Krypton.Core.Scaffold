@@ -1,9 +1,9 @@
 using System;
 using System.Net;
 using Kr.__PROJECT_NAME__.Adapter.Sample;
-using Kr.__PROJECT_NAME__.Common.Infrastructure.Http;
 using Kr.__PROJECT_NAME__.Domain.Common;
 using Kr.__PROJECT_NAME__.Domain.Ports;
+using Kr.Common.Infrastructure.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
