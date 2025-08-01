@@ -41,6 +41,6 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="8.0.0" />
-    <PackageVersion Include="Krypton.Common" Version="1.0.0" />
+    <PackageVersion Include="Krypton.Common" Version="1.1.0" />
   </ItemGroup>
 </Project>

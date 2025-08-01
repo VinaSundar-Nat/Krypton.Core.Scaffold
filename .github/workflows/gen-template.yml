@@ -12,6 +12,11 @@ on:
         required: true
         type: boolean
         default: true
+      repo_prefix:
+        description: 'Custom repository name (optional, leave empty to use default naming convention)'
+        required: false
+        type: string
+        default: 'Krypton'
 
 jobs:
   generate-project:
@@ -79,3 +84,4 @@ jobs:
         REPO_OWNER: ${{ vars.repo_owner }}
         CREATE_REPO: ${{ inputs.create_repo }}
         PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        CUSTOM_REPO_PREFIX: ${{ github.event.inputs.repo_prefix }}

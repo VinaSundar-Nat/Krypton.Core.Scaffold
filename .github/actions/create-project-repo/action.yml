@@ -15,6 +15,10 @@ inputs:
     description: 'Owner of the repository (defaults to authenticated user)'
     required: false
     default: '${{ github.repository_owner }}'
+  CUSTOM_REPO_PREFIX:
+    description: 'Custom prefix for the repository name (optional, defaults to "Krypton")'
+    required: false
+    default: 'Krypton'
 
 runs:
   using: 'composite' 
@@ -59,8 +63,8 @@ runs:
         if [ "$REPO_OWNER" = "${{ github.repository_owner }}" ] && [ -z "$REPO_OWNER" ]; then
           REPO_OWNER="$AUTHENTICATED_USER"
         fi
-        
-        REPO_NAME="Kr.${{ inputs.PROJECT_NAME }}"
+
+        REPO_NAME="${{ inputs.CUSTOM_REPO_PREFIX }}.${{ inputs.PROJECT_NAME }}"
         FULL_REPO_NAME="$REPO_OWNER/$REPO_NAME"
         
         echo "Will create repository: $FULL_REPO_NAME"
