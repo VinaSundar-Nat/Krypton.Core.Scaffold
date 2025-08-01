@@ -12,7 +12,5 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" />
     <PackageReference Include="Krypton.Common" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="../Shared/Kr.__PROJECT_NAME__.Common/Kr.__PROJECT_NAME__.Common.csproj" />
-  </ItemGroup>
+
 </Project>
