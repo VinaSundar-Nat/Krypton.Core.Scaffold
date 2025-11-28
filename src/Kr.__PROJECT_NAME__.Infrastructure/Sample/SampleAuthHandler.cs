@@ -2,7 +2,7 @@ using Kr.__PROJECT_NAME__.Domain.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
-namespace Kr.__PROJECT_NAME__.Adapter.Sample;
+namespace Kr.__PROJECT_NAME__.Infrastructure.Sample;
 
 public class SampleAuthHandler(IOptions<ServiceConfiguration> Options, IHttpContextAccessor HttpContextAccessor) : DelegatingHandler
 {

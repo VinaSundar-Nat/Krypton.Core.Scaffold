@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../Kr.__PROJECT_NAME__.Adapter/Kr.__PROJECT_NAME__.Adapter.csproj" />
     <ProjectReference Include="../Kr.__PROJECT_NAME__.Domain/Kr.__PROJECT_NAME__.Domain.csproj" />
+    <ProjectReference Include="../Kr.__PROJECT_NAME__.Infrastructure/Kr.__PROJECT_NAME__.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
