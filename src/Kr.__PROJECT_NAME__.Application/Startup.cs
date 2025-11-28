@@ -1,4 +1,4 @@
-using Kr.__PROJECT_NAME__.Adapter;
+using Kr.__PROJECT_NAME__.Infrastructure;
 using Kr.__PROJECT_NAME__.Application.Feature.Sample;
 using Kr.__PROJECT_NAME__.Domain.Ports;
 using Microsoft.Extensions.Configuration;

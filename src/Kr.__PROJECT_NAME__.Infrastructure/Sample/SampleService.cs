@@ -4,7 +4,7 @@ using Kr.__PROJECT_NAME__.Domain.Dto;
 using Kr.__PROJECT_NAME__.Domain.Ports;
 using Microsoft.Extensions.Options;
 
-namespace Kr.__PROJECT_NAME__.Adapter.Sample;
+namespace Kr.__PROJECT_NAME__.Infrastructure.Sample;
 
 public class SampleService(IOptions<ServiceConfiguration> ServiceOptions) : ISampleService
 {
