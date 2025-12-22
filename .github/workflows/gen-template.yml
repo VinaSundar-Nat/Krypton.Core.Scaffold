@@ -47,8 +47,10 @@ jobs:
           # Create working directory
           mkdir -p generated-project
 
-          # Copy template files
+          # Copy template files (including hidden files like .github)
+          shopt -s dotglob
           cp -r src/* generated-project/
+          shopt -u dotglob
 
           # Replace placeholders in all files
           find generated-project -type f \( -name "*.cs" -o -name "*.csproj" -o -name "*.sln" -o -name "*.md" -o -name "*.json" -o -name "*.http" -o -name "*.yml" -o -name "dockerfile" \) | \
