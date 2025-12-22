@@ -4,84 +4,84 @@ on:
   workflow_dispatch:
     inputs:
       project_name:
-        description: 'Project Name (PascalCase, e.g., MediaRecorder - Kr prefix will be added automatically)'
+        description: "Project Name (PascalCase, e.g., MediaRecorder - Kr prefix will be added automatically)"
         required: true
         type: string
       create_repo:
-        description: 'Create new GitHub repository?'
+        description: "Create new GitHub repository?"
         required: true
         type: boolean
         default: true
       repo_prefix:
-        description: 'Custom repository name (optional, leave empty to use default naming convention)'
+        description: "Custom repository name (optional, leave empty to use default naming convention)"
         required: false
         type: string
-        default: 'Krypton'
+        default: "Krypton"
 
 jobs:
   generate-project:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout scaffold repository
-      uses: actions/checkout@v4
-      
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '10.0.x'
-        
-    - name: Validate project name
-      run: |
-        if [[ ! "${{ github.event.inputs.project_name }}" =~ ^[A-Z][a-zA-Z0-9]*(\.[A-Z][a-zA-Z0-9]*)*$ ]]; then
-          echo "Project name must be PascalCase and start with a letter"
-          exit 1
-        fi
-        
-    - name: Generate project files
-      run: |
-        # Add prefix to project name
-        BASE_PROJECT_NAME="${{ github.event.inputs.project_name }}"
-        PROJECT_NAME="${BASE_PROJECT_NAME}"
-        
-        # Create working directory
-        mkdir -p generated-project
-        
-        # Copy template files
-        cp -r src/* generated-project/
-        
-        # Replace placeholders in all files
-        find generated-project -type f -name "*.cs" -o -name "*.csproj" -o -name "*.sln" -o -name "*.md" -o -name "*.json" -o -name "*.http" | \
-        while read file; do
-          sed -i "s/__PROJECT_NAME__/$PROJECT_NAME/g" "$file"
-        done
-        
-        # Rename directories first (deepest first to avoid path issues)
-        find generated-project -depth -type d -name "*__PROJECT_NAME__*" | \
-        while read dir; do
-          new_dir=$(echo "$dir" | sed "s/__PROJECT_NAME__/$PROJECT_NAME/g")
-          if [ "$dir" != "$new_dir" ]; then
-            echo "Renaming directory: $dir -> $new_dir"
-            mv "$dir" "$new_dir"
+      - name: Checkout scaffold repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Validate project name
+        run: |
+          if [[ ! "${{ github.event.inputs.project_name }}" =~ ^[A-Z][a-zA-Z0-9]*(\.[A-Z][a-zA-Z0-9]*)*$ ]]; then
+            echo "Project name must be PascalCase and start with a letter"
+            exit 1
           fi
-        done
-        
-        # Then rename files
-        find generated-project -type f -name "*__PROJECT_NAME__*" | \
-        while read file; do
-          new_file=$(echo "$file" | sed "s/__PROJECT_NAME__/$PROJECT_NAME/g")
-          if [ "$file" != "$new_file" ]; then
-            echo "Renaming file: $file -> $new_file"
-            mv "$file" "$new_file"
-          fi
-        done
-    
-    - name: Create project repository
-      id: create_repo
-      uses: ./.github/actions/create-project-repo
-      with:
-        PROJECT_NAME: ${{ github.event.inputs.project_name }}
-        REPO_OWNER: ${{ vars.repo_owner }}
-        CREATE_REPO: ${{ inputs.create_repo }}
-        PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        CUSTOM_REPO_PREFIX: ${{ github.event.inputs.repo_prefix }}
+
+      - name: Generate project files
+        run: |
+          # Add prefix to project name
+          BASE_PROJECT_NAME="${{ github.event.inputs.project_name }}"
+          PROJECT_NAME="${BASE_PROJECT_NAME}"
+
+          # Create working directory
+          mkdir -p generated-project
+
+          # Copy template files
+          cp -r src/* generated-project/
+
+          # Replace placeholders in all files
+          find generated-project -type f \( -name "*.cs" -o -name "*.csproj" -o -name "*.sln" -o -name "*.md" -o -name "*.json" -o -name "*.http" -o -name "*.yml" -o -name "dockerfile" \) | \
+          while read file; do
+            sed -i "s/__PROJECT_NAME__/$PROJECT_NAME/g" "$file"
+          done
+
+          # Rename directories first (deepest first to avoid path issues)
+          find generated-project -depth -type d -name "*__PROJECT_NAME__*" | \
+          while read dir; do
+            new_dir=$(echo "$dir" | sed "s/__PROJECT_NAME__/$PROJECT_NAME/g")
+            if [ "$dir" != "$new_dir" ]; then
+              echo "Renaming directory: $dir -> $new_dir"
+              mv "$dir" "$new_dir"
+            fi
+          done
+
+          # Then rename files
+          find generated-project -type f -name "*__PROJECT_NAME__*" | \
+          while read file; do
+            new_file=$(echo "$file" | sed "s/__PROJECT_NAME__/$PROJECT_NAME/g")
+            if [ "$file" != "$new_file" ]; then
+              echo "Renaming file: $file -> $new_file"
+              mv "$file" "$new_file"
+            fi
+          done
+
+      - name: Create project repository
+        id: create_repo
+        uses: ./.github/actions/create-project-repo
+        with:
+          PROJECT_NAME: ${{ github.event.inputs.project_name }}
+          REPO_OWNER: ${{ vars.repo_owner }}
+          CREATE_REPO: ${{ inputs.create_repo }}
+          PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          CUSTOM_REPO_PREFIX: ${{ github.event.inputs.repo_prefix }}
