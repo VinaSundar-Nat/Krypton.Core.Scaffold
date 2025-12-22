@@ -1,0 +1,95 @@
+name: Build, Test, Scan and Push
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+    inputs:
+      image_name:
+        description: "Image Name (e.g., MediaRecorder)"
+        required: true
+        type: string
+      image_tag:
+        description: "Image Tag (e.g., latest)"
+        required: true
+        type: string
+
+env:
+  DOTNET_VERSION: "10.0"
+  IMAGE_NAME: "krypton-${{ github.event.inputs.image_name || 'core-scaffold' }}"
+  REGISTRY_URL: ${{ vars.REGISTRY_URL }}
+  IMAGE_TAG: ${{ github.event.inputs.image_tag || github.sha }}
+
+jobs:
+  build-test-scan-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Checkout private CICD repository (required for private repos only)
+      - name: Checkout CICD Actions Repository
+        uses: actions/checkout@v4
+        with:
+          repository: VinaSundar-Nat/Krypton.CICD
+          token: ${{ secrets.CICD_REPO_PAT }}
+          path: .github/cicd-actions
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: |
+          dotnet restore src/Kr.__PROJECT_NAME__.Domain/*.csproj
+          dotnet restore src/Kr.__PROJECT_NAME__.Infrastructure/*.csproj
+          dotnet restore src/Kr.__PROJECT_NAME__.Persistence/*.csproj
+          dotnet restore src/Kr.__PROJECT_NAME__.Application/*.csproj
+          dotnet restore src/Kr.__PROJECT_NAME__.Adapter/*.csproj
+          dotnet restore src/Kr.__PROJECT_NAME__.Api/*.csproj
+          dotnet restore src/Tests/Kr.__PROJECT_NAME__.UnitTests/*.csproj
+
+      - name: Build project
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Run unit tests
+        run: dotnet test src/Tests/Kr.__PROJECT_NAME__.UnitTests/*.csproj --configuration Release --no-build --verbosity normal
+
+      - name: Build and Scan Docker Image
+        uses: ./.github/cicd-actions/actions/run-trivy-image-scan
+        with:
+          image-name: ${{ env.IMAGE_NAME }}
+          image-tag: ${{ env.IMAGE_TAG }}
+          dockerfile-path: "."
+          trivy-severity: "CRITICAL,HIGH"
+          trivy-exit-code: "1"
+          continue-on-error: "false"
+          trivy-ignore-unfixed: "true"
+
+      - name: Push Docker Image to Registry
+        if: success() && github.event_name == 'push'
+        uses: ./.github/cicd-actions/actions/docker-push
+        with:
+          image-name: ${{ env.IMAGE_NAME }}
+          image-tag: ${{ env.IMAGE_TAG }}
+          registry-url: ${{ env.REGISTRY_URL }}
+          registry-username: ${{ secrets.REGISTRY_USERNAME }}
+          registry-token: ${{ secrets.REGISTRY_TOKEN }}
+
+      - name: Push latest tag
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: ./.github/cicd-actions/actions/docker-push
+        with:
+          image-name: ${{ env.IMAGE_NAME }}
+          image-tag: "latest"
+          registry-url: ${{ env.REGISTRY_URL }}
+          registry-username: ${{ secrets.REGISTRY_USERNAME }}
+          registry-token: ${{ secrets.REGISTRY_TOKEN }}
