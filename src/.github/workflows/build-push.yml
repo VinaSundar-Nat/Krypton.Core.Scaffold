@@ -66,7 +66,6 @@ jobs:
           dotnet restore Kr.__PROJECT_NAME__.Infrastructure/*.csproj
           dotnet restore Kr.__PROJECT_NAME__.Persistence/*.csproj
           dotnet restore Kr.__PROJECT_NAME__.Application/*.csproj
-          dotnet restore Kr.__PROJECT_NAME__.Adapter/*.csproj
           dotnet restore Kr.__PROJECT_NAME__.Api/*.csproj
           dotnet restore Tests/Kr.__PROJECT_NAME__.UnitTests/*.csproj
 
