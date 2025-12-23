@@ -66,7 +66,6 @@ jobs:
           dotnet restore Kr.__PROJECT_NAME__.Infrastructure/*.csproj
           dotnet restore Kr.__PROJECT_NAME__.Persistence/*.csproj
           dotnet restore Kr.__PROJECT_NAME__.Application/*.csproj
-          dotnet restore Kr.__PROJECT_NAME__.Adapter/*.csproj
           dotnet restore Kr.__PROJECT_NAME__.Api/*.csproj
           dotnet restore Tests/Kr.__PROJECT_NAME__.UnitTests/*.csproj
 
@@ -96,4 +95,4 @@ jobs:
           registry-url: ${{ env.REGISTRY_URL }}
           registry-username: ${{ secrets.REGISTRY_USERNAME }}
           registry-token: ${{ secrets.REGISTRY_TOKEN }}
-          registry-source: ${{ env.REGISTRY_URL }}/${{ secrets.REGISTRY_GROUP }}/${{ github.event.repository.name }}
+          registry-source: ${{ env.REGISTRY_URL }}/${{ secrets.REGISTRY_GROUP }}/${{ steps.image-name.outputs.image-name }}
