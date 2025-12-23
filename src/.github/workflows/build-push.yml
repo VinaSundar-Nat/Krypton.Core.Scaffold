@@ -42,8 +42,8 @@ jobs:
           else
             IMAGE_NAME="${{ github.event.repository.name }}"
           fi
-          # Replace dots with underscores
-          IMAGE_NAME=$(echo "$IMAGE_NAME" | tr '.' '_')
+          # Replace dots with underscores and convert to lowercase
+          IMAGE_NAME=$(echo "$IMAGE_NAME" | tr '.' '_' | tr '[:upper:]' '[:lower:]')
           echo "image-name=$IMAGE_NAME" >> $GITHUB_OUTPUT
           echo "Using image name: $IMAGE_NAME"
 
@@ -62,19 +62,19 @@ jobs:
 
       - name: Restore dependencies
         run: |
-          dotnet restore src/Kr.__PROJECT_NAME__.Domain/*.csproj
-          dotnet restore src/Kr.__PROJECT_NAME__.Infrastructure/*.csproj
-          dotnet restore src/Kr.__PROJECT_NAME__.Persistence/*.csproj
-          dotnet restore src/Kr.__PROJECT_NAME__.Application/*.csproj
-          dotnet restore src/Kr.__PROJECT_NAME__.Adapter/*.csproj
-          dotnet restore src/Kr.__PROJECT_NAME__.Api/*.csproj
-          dotnet restore src/Tests/Kr.__PROJECT_NAME__.UnitTests/*.csproj
+          dotnet restore Kr.__PROJECT_NAME__.Domain/*.csproj
+          dotnet restore Kr.__PROJECT_NAME__.Infrastructure/*.csproj
+          dotnet restore Kr.__PROJECT_NAME__.Persistence/*.csproj
+          dotnet restore Kr.__PROJECT_NAME__.Application/*.csproj
+          dotnet restore Kr.__PROJECT_NAME__.Adapter/*.csproj
+          dotnet restore Kr.__PROJECT_NAME__.Api/*.csproj
+          dotnet restore Tests/Kr.__PROJECT_NAME__.UnitTests/*.csproj
 
       - name: Build project
         run: dotnet build --configuration Release --no-restore
 
       - name: Run unit tests
-        run: dotnet test src/Tests/Kr.__PROJECT_NAME__.UnitTests/*.csproj --configuration Release --no-build --verbosity normal
+        run: dotnet test Tests/Kr.__PROJECT_NAME__.UnitTests/*.csproj --configuration Release --no-build --verbosity normal
 
       - name: Build and Scan Docker Image
         uses: ./.github/cicd-actions/actions/run-trivy-image-scan
