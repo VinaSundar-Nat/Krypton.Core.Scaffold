@@ -12,13 +12,13 @@ public static partial class ApiEndpoints
     public static void SampleEndpoints(this WebApplication app)
     {
         var sampleGroup = app.MapGroup("/api/doc/sample/v1");
-        sampleGroup.MapGet("/", async ([AsParameters] ApiGetRequest request,
+        sampleGroup.MapGet("/", async ([AsParameters] ApiHeaders request,
                 HttpContext context,
                 [FromServices] ISampleFeature sampleFeature,
                 CancellationToken token = default) =>
         {
             var sample = await sampleFeature.Samples("TEST");
-            return Results.Ok(new ApiGetSuccessResponse<SampleDto> { StatusCode = 200, Url = context.Request.Path ,Data = sample });
+            return Results.Ok(new ApiSuccessResponse<SampleDto> { StatusCode = 200, Url = context.Request.Path ,Data = sample });
         }).WithOpenApi(operation =>
             operation.GenerateOpenApiDoc(
                 "v1 sample get.",
@@ -26,7 +26,7 @@ public static partial class ApiEndpoints
                 "Sample",
                 "File opertaions to support enterprise operations."
         ))
-        .Produces<ApiGetResponse>(StatusCodes.Status200OK)
+        .Produces<ApiSuccessResponse<SampleDto>>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status500InternalServerError)
         .Produces(StatusCodes.Status400BadRequest);
     }
