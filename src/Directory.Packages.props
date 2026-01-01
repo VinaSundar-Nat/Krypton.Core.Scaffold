@@ -22,7 +22,6 @@
     <PackageVersion Include="Serilog.Settings.Configuration" Version="3.4.0" />
     <PackageVersion Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
     <PackageVersion Include="Serilog.Filters.Expressions" Version="2.1.0" />
-    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.6.0" />
     <PackageVersion Include="StackExchange.Redis" Version="2.8.16" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.4.0" />
@@ -44,6 +43,6 @@
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="10.0.0" /> 
     
-    <PackageVersion Include="Krypton.Common" Version="1.1.5" />
+    <PackageVersion Include="Krypton.Common" Version="1.1.7" />
   </ItemGroup>
 </Project>

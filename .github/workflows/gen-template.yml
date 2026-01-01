@@ -53,7 +53,7 @@ jobs:
           shopt -u dotglob
 
           # Replace placeholders in all files
-          find generated-project -type f \( -name "*.cs" -o -name "*.csproj" -o -name "*.sln" -o -name "*.md" -o -name "*.json" -o -name "*.http" -o -name "*.yml" -o -name "Dockerfile" \) | \
+          find generated-project -type f \( -name "*.cs" -o -name "*.csproj" -o -name "*.sln" -o -name "*.md" -o -name "*.json" -o -name "*.http" -o -name "*.yml" -o -name "Dockerfile" -name "*generate-openapi.sh" \) | \
           while read file; do
             sed -i "s/__PROJECT_NAME__/$PROJECT_NAME/g" "$file"
           done
