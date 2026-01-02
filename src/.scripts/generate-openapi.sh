@@ -44,7 +44,7 @@ fi
 # Publish the API project
 echo "Publishing API project..."
 PUBLISH_DIR="$PROJECT_ROOT/Kr.__PROJECT_NAME__.Api/bin/Release/publish"
-dotnet publish "$API_PROJECT_PATH" --configuration Release --output "$PUBLISH_DIR"
+dotnet publish "$API_PROJECT_PATH" --configuration Release --output "$PUBLISH_DIR" /p:GenerateOpenApi=false
 
 # Check if appsettings.json exists in publish dir, if not copy it
 if [ ! -f "$PUBLISH_DIR/appsettings.json" ]; then
