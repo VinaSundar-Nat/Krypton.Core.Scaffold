@@ -74,7 +74,7 @@ jobs:
           dotnet restore Tests/Kr.__PROJECT_NAME__.UnitTests/*.csproj
 
       - name: Build project
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release --no-restore /p:GenerateOpenApi=false
 
       - name: Run unit tests
         run: dotnet test Tests/Kr.__PROJECT_NAME__.UnitTests/*.csproj --configuration Release --no-build --verbosity normal

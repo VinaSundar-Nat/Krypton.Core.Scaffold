@@ -16,7 +16,7 @@ RUN dotnet restore Kr.__PROJECT_NAME__.sln
 COPY . .
 
 WORKDIR /src/Kr.__PROJECT_NAME__.Api
-RUN dotnet publish -c Release --no-restore -o /core
+RUN dotnet publish -c Release --no-restore -o /core /p:GenerateOpenApi=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /core
