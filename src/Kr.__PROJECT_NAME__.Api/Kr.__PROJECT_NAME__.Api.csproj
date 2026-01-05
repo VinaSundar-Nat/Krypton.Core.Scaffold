@@ -10,6 +10,7 @@
      <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
      <PackageReference Include="Swashbuckle.AspNetCore" />
      <PackageReference Include="Krypton.Common" />
+     <PackageReference Include="Asp.Versioning.Http" />
   </ItemGroup>
 
   <ItemGroup>
