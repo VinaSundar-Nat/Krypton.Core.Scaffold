@@ -2,16 +2,15 @@
 using Kr.__PROJECT_NAME__.Domain.Dto;
 using Kr.__PROJECT_NAME__.Domain.Ports;
 using Kr.Common.Infrastructure.Http.Models;
-using Microsoft.AspNetCore.Mvc;
 
 
-namespace KR.Document.HB.Api;
+namespace Kr.__PROJECT_NAME__.Api;
 
 public static partial class ApiEndpoints
 {
-    public static void SampleEndpoints(this WebApplication app)
+    public static void SampleEndpoints(IEndpointRouteBuilder app, IVersionedEndpointRouteBuilder coreAppBuilder)
     {
-        var sampleGroup = app.MapGroup("/api/doc/sample/v1");
+        var sampleGroup = coreAppBuilder.MapGroup("/api/doc/sample/v1").HasApiVersion( 1.0 );
         sampleGroup.MapGet("/", async ([AsParameters] ApiHeaders request,
                 HttpContext context,
                 [FromServices] ISampleFeature sampleFeature,

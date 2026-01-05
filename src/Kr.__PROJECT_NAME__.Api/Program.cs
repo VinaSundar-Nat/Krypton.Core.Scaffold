@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Kr.__PROJECT_NAME__.Api;
 using Kr.__PROJECT_NAME__.Api.Infra;
-using KR.Document.HB.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +29,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseExceptionHandler();
-app.SampleEndpoints();
+app.RegisterEndpoints();
 
 app.Run();
