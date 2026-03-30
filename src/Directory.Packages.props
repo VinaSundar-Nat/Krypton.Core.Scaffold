@@ -44,5 +44,6 @@
     
     <PackageVersion Include="Krypton.Common" Version="1.1.7" />
     <PackageVersion Include="Asp.Versioning.Http" Version="8.1.1" />
+    <PackageVersion Include="NsDepCop" Version="2.7.0" />
   </ItemGroup>
 </Project>
